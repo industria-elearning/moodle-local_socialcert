@@ -25,11 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_socialcert';
-$plugin->release = '1.0.2';
-$plugin->version = 2025120200;
+$plugin->release = '1.1.0';
+$plugin->version = 2025121200;
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [405, 405];
+$plugin->supported = [405, 501];
 $plugin->dependencies = [
     'mod_customcert' => 2024042212,
     'aiprovider_datacurso' => 2025100201,

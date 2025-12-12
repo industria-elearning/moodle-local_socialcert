@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_socialcert';
-$plugin->release = '1.0.3';
+$plugin->release = '1.1.0';
 $plugin->version = 2025121200;
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_STABLE;

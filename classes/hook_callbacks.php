@@ -24,48 +24,51 @@
 
 namespace local_socialcert;
 
-use core\hook\output\before_standard_html_head_generation;
 use core\hook\output\before_footer_html_generation;
 
 /**
  * Defines plugin hook callbacks for local_socialcert.
  *
- * Contains static methods that respond to Moodle’s hook system in order
- * to inject custom CSS, JavaScript, and HTML into the certificate view page.
- *
- * Specifically:
- * - Adds a custom stylesheet before the <head> tag is rendered.
- * - Injects the rendered panel template before the page footer.
+ * Only the before_footer_html_generation hook is registered: it injects the
+ * rendered panel template and loads the JavaScript module on the certificate
+ * view page. The plugin stylesheet (styles.css) needs no hook because Moodle
+ * auto-includes every plugin's styles.css via the theme stylesheet.
  *
  * @package    local_socialcert
  * @category   output
  */
 class hook_callbacks {
     /**
-     * Adds custom CSS and JS requirements before the standard <head> section is generated.
+     * Returns the course-module id of the current certificate view, or 0 when
+     * the panel should not be rendered.
      *
-     * This callback is triggered via the before_standard_html_head_generation hook.
-     * It ensures that the plugin stylesheet is loaded only on the custom certificate
-     * view page for logged-in, non-guest users.
+     * The checks are intentionally ordered so that $PAGE->cm is only read after
+     * the page-type and session guards: hooks fire on every page, and on a
+     * non-course-module page $PAGE->cm is null, so reading it unconditionally
+     * raises an "Attempt to read property id on null" PHP warning.
      *
-     * @param before_standard_html_head_generation $hook The hook object for the event.
-     * @return void
+     * @return int The current cmid, or 0 if the panel should not be shown.
      */
-    public static function before_standard_html_head_generation(
-        before_standard_html_head_generation $hook
-    ): void {
+    protected static function get_active_cmid(): int {
         global $PAGE;
 
-        if (
-            $PAGE->pagetype !== 'mod-customcert-view' ||
-            empty($PAGE->cm->id) ||
-            !isloggedin() ||
-            isguestuser()
-        ) {
-            return;
+        if ($PAGE->pagetype !== 'mod-customcert-view') {
+            return 0;
+        }
+        if (!isloggedin()) {
+            return 0;
+        }
+        if (isguestuser()) {
+            return 0;
+        }
+        if (empty($PAGE->cm) || empty($PAGE->cm->id)) {
+            return 0;
+        }
+        if (trim((string) get_config('local_socialcert', 'organizationid')) === '') {
+            return 0;
         }
 
-        $PAGE->requires->css('/local/socialcert/styles.css');
+        return (int) $PAGE->cm->id;
     }
 
     /**
@@ -83,14 +86,8 @@ class hook_callbacks {
     ): void {
         global $PAGE, $OUTPUT;
 
-        $cmid  = $PAGE->cm->id;
-
-        if (
-            $PAGE->pagetype !== 'mod-customcert-view' ||
-            empty($cmid) ||
-            !isloggedin() ||
-            isguestuser()
-        ) {
+        $cmid = self::get_active_cmid();
+        if (!$cmid) {
             return;
         }
 

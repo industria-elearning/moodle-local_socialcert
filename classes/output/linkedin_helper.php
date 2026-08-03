@@ -63,10 +63,14 @@ class linkedin_helper {
         string $certid,
         ?int $expiryunixtime = null
     ): ?string {
-        $defaultorgid = '1337';
+        $orgid = trim((string) get_config('local_socialcert', 'organizationid'));
 
-        $raworgid = get_config('local_socialcert', 'organizationid');
-        $orgid = (string)(empty($raworgid) ? $defaultorgid : $raworgid);
+        // No share link until an administrator sets the real organization ID.
+        // A hardcoded fallback would attribute every learner's certificate to
+        // an unrelated LinkedIn organization.
+        if ($orgid === '') {
+            return null;
+        }
 
         $params = [
             'startTask' => 'CERTIFICATION_NAME',

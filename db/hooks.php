@@ -25,10 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
-    [
-        'hook' => \core\hook\output\before_standard_html_head_generation::class,
-        'callback' => [\local_socialcert\hook_callbacks::class, 'before_standard_html_head_generation'],
-    ],
+    // The before_standard_html_head_generation hook was removed because that
+    // class does not exist in Moodle 4.5 (the real core hook is
+    // before_standard_head_html_generation). The plugin stylesheet is loaded
+    // automatically by Moodle (every plugin's styles.css is included via the
+    // theme stylesheet), so the head hook was redundant anyway.
     [
         'hook' => \core\hook\output\before_footer_html_generation::class,
         'callback' => [\local_socialcert\hook_callbacks::class, 'before_footer_html_generation'],

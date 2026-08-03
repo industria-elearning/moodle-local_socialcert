@@ -24,7 +24,6 @@
 
 namespace local_socialcert;
 
-use core\hook\output\before_standard_html_head_generation;
 use core\hook\output\before_footer_html_generation;
 
 /**
@@ -41,33 +40,6 @@ use core\hook\output\before_footer_html_generation;
  * @category   output
  */
 class hook_callbacks {
-    /**
-     * Adds custom CSS and JS requirements before the standard <head> section is generated.
-     *
-     * This callback is triggered via the before_standard_html_head_generation hook.
-     * It ensures that the plugin stylesheet is loaded only on the custom certificate
-     * view page for logged-in, non-guest users.
-     *
-     * @param before_standard_html_head_generation $hook The hook object for the event.
-     * @return void
-     */
-    public static function before_standard_html_head_generation(
-        before_standard_html_head_generation $hook
-    ): void {
-        global $PAGE;
-
-        if (
-            $PAGE->pagetype !== 'mod-customcert-view' ||
-            empty($PAGE->cm->id) ||
-            !isloggedin() ||
-            isguestuser()
-        ) {
-            return;
-        }
-
-        $PAGE->requires->css('/local/socialcert/styles.css');
-    }
-
     /**
      * Injects custom HTML into the footer area of the certificate view page.
      *

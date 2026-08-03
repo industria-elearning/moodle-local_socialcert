@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_whatsapp\privacy;
+namespace local_socialcert\privacy;
 
 /**
- * Class provider
+ * Privacy provider for local_socialcert.
+ *
+ * This plugin does not store any personal data.
  *
  * @package    local_socialcert
  * @copyright  2025 Manuel Bojaca <manuel@buendata.com>
